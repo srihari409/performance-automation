@@ -1,8 +1,13 @@
 $ErrorActionPreference = "Stop"
 
 $JMETER_BIN = "C:\Tools\apache-jmeter-5.6.3\bin"
-$JMX        = "jmeter\Godrej_HomePage_Prod.jmx"
-$JTL        = "results.jtl"
+
+# Repo root = one folder above "scripts"
+$REPO_ROOT = Split-Path -Parent $PSScriptRoot
+
+# Full paths (so it works even after Push-Location)
+$JMX = Join-Path $REPO_ROOT "jmeter\Godrej_HomePage_Prod.jmx"
+$JTL = Join-Path $REPO_ROOT "results.jtl"
 
 $SLA_CHECKER = "scripts\check_sla_from_jtl.py"
 
