@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
@@ -183,7 +183,7 @@
         <boolProp name="CacheManager.controlledByThread">false</boolProp>
       </CacheManager>
       <hashTree/>
-      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
         <collectionProp name="Arguments.arguments">
           <elementProp name="P_Timer" elementType="Argument">
             <stringProp name="Argument.name">P_Timer</stringProp>
@@ -228,7 +228,7 @@
         <stringProp name="TestPlan.comments">gplwsadmin.godrejproperties.com</stringProp>
       </Arguments>
       <hashTree/>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="ThreadGroup_Home">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="ThreadGroup_Home" enabled="true">
         <intProp name="ThreadGroup.num_threads">90</intProp>
         <intProp name="ThreadGroup.ramp_time">180</intProp>
         <longProp name="ThreadGroup.duration">300</longProp>
@@ -335,7 +335,7 @@
               <stringProp name="TestPlan.comments">Created from cURL on 2025-09-05T12:15:18.1822216</stringProp>
             </HeaderManager>
             <hashTree/>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
               <collectionProp name="Asserion.test_strings">
                 <stringProp name="49586">200</stringProp>
               </collectionProp>
@@ -554,7 +554,7 @@
             </ConstantTimer>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="4.getNriContacts">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="4.getNriContacts" enabled="true">
             <stringProp name="TestPlan.comments">Created from cURL on 2025-09-05T12:24:22.0294816</stringProp>
             <stringProp name="HTTPSampler.domain">${P_URL1}</stringProp>
             <stringProp name="HTTPSampler.protocol">${P_Protocol}</stringProp>
@@ -860,7 +860,7 @@
             </ConstantTimer>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="7.getCityProperties">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="7.getCityProperties" enabled="true">
             <stringProp name="TestPlan.comments">Created from cURL on 2025-09-05T12:28:58.7014718</stringProp>
             <stringProp name="HTTPSampler.domain">${P_URL1}</stringProp>
             <stringProp name="HTTPSampler.protocol">${P_Protocol}</stringProp>
@@ -1460,7 +1460,7 @@
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="1.gePropertiesData">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="1.gePropertiesData" enabled="true">
             <stringProp name="TestPlan.comments">Created from cURL on 2025-09-05T16:44:24.9417547</stringProp>
             <stringProp name="HTTPSampler.domain">${P_URL2}</stringProp>
             <stringProp name="HTTPSampler.protocol">${P_Protocol}</stringProp>
@@ -1548,7 +1548,7 @@
               <stringProp name="JSONPostProcessor.defaultValues">NO_SLUGS</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract_PropertySlug">
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract_PropertySlug" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">slug</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.pageProps.clusterObject.features[*].properties.data.slug</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
@@ -1570,7 +1570,7 @@
               <stringProp name="JSONPostProcessor.defaultValues">NO_TYPE</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
               <stringProp name="scriptLanguage">groovy</stringProp>
               <stringProp name="parameters"></stringProp>
               <stringProp name="filename"></stringProp>
@@ -1627,7 +1627,7 @@ if (target) {
 </stringProp>
             </JSR223PostProcessor>
             <hashTree/>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
               <collectionProp name="Asserion.test_strings">
                 <stringProp name="49586">200</stringProp>
               </collectionProp>
@@ -1642,7 +1642,7 @@ if (target) {
             </ConstantTimer>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="2.get_RandomProperty_Details">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="2.get_RandomProperty_Details" enabled="true">
             <stringProp name="TestPlan.comments">Created from cURL on 2025-09-05T16:36:07.7279349</stringProp>
             <stringProp name="HTTPSampler.domain">${P_URL2}</stringProp>
             <stringProp name="HTTPSampler.protocol">${P_Protocol}</stringProp>
@@ -1737,7 +1737,7 @@ if (target) {
               <stringProp name="TestPlan.comments">Created from cURL on 2025-09-05T16:36:07.7279349</stringProp>
             </HeaderManager>
             <hashTree/>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
               <collectionProp name="Asserion.test_strings">
                 <stringProp name="49586">200</stringProp>
               </collectionProp>
@@ -6864,7 +6864,7 @@ if (target) {
           </hashTree>
         </hashTree>
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -6901,7 +6901,7 @@ if (target) {
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree_Err">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree_Err" enabled="true">
         <boolProp name="ResultCollector.error_logging">true</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -6938,7 +6938,7 @@ if (target) {
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report">
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -6975,7 +6975,7 @@ if (target) {
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -7012,7 +7012,7 @@ if (target) {
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
+      <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -7048,138 +7048,7 @@ if (target) {
         </objProp>
         <stringProp name="filename"></stringProp>
       </ResultCollector>
-      <hashTree/>
-      <com.github.johrstrom.listener.PrometheusListener guiclass="com.github.johrstrom.listener.gui.PrometheusListenerGui" testclass="com.github.johrstrom.listener.PrometheusListener" testname="Prometheus Listener" enabled="true">
-        <collectionProp name="prometheus.collector_definitions">
-          <elementProp name="" elementType="com.github.johrstrom.listener.ListenerCollectorConfig">
-            <stringProp name="collector.help">Total number of samples</stringProp>
-            <stringProp name="collector.metric_name">jmeter_samples_total</stringProp>
-            <stringProp name="collector.type">COUNTER</stringProp>
-            <collectionProp name="collector.labels">
-              <stringProp name="102727412">label</stringProp>
-              <stringProp name="3059181">code</stringProp>
-            </collectionProp>
-            <stringProp name="collector.quantiles_or_buckets"></stringProp>
-            <stringProp name="listener.collector.measuring">CountTotal</stringProp>
-          </elementProp>
-          <elementProp name="" elementType="com.github.johrstrom.listener.ListenerCollectorConfig">
-            <stringProp name="collector.help">Response time in ms</stringProp>
-            <stringProp name="collector.metric_name">jmeter_response_time_ms</stringProp>
-            <stringProp name="collector.type">HISTOGRAM</stringProp>
-            <collectionProp name="collector.labels">
-              <stringProp name="102727412">label</stringProp>
-              <stringProp name="3059181">code</stringProp>
-            </collectionProp>
-            <stringProp name="collector.quantiles_or_buckets">50,100,200,300,500,1000,2000,3000,5000,10000</stringProp>
-          </elementProp>
-        </collectionProp>
-      </com.github.johrstrom.listener.PrometheusListener>
-      <hashTree/>
-      <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="false">
-        <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
-          <collectionProp name="Arguments.arguments">
-            <elementProp name="graphiteMetricsSender" elementType="Argument">
-              <stringProp name="Argument.name">graphiteMetricsSender</stringProp>
-              <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.graphite.TextGraphiteMetricsSender</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-            <elementProp name="graphiteHost" elementType="Argument">
-              <stringProp name="Argument.name">graphiteHost</stringProp>
-              <stringProp name="Argument.value"></stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-            <elementProp name="graphitePort" elementType="Argument">
-              <stringProp name="Argument.name">graphitePort</stringProp>
-              <stringProp name="Argument.value">2003</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-            <elementProp name="rootMetricsPrefix" elementType="Argument">
-              <stringProp name="Argument.name">rootMetricsPrefix</stringProp>
-              <stringProp name="Argument.value">jmeter.</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-            <elementProp name="summaryOnly" elementType="Argument">
-              <stringProp name="Argument.name">summaryOnly</stringProp>
-              <stringProp name="Argument.value">true</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-            <elementProp name="samplersList" elementType="Argument">
-              <stringProp name="Argument.name">samplersList</stringProp>
-              <stringProp name="Argument.value"></stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-            <elementProp name="percentiles" elementType="Argument">
-              <stringProp name="Argument.name">percentiles</stringProp>
-              <stringProp name="Argument.value">90;95;99</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-          </collectionProp>
-        </elementProp>
-        <stringProp name="classname">org.apache.jmeter.visualizers.backend.graphite.GraphiteBackendListenerClient</stringProp>
-      </BackendListener>
-      <hashTree/>
-      <com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup guiclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroupGui" testclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup" testname="bzm - Concurrency Thread Group" enabled="false">
-        <elementProp name="ThreadGroup.main_controller" elementType="com.blazemeter.jmeter.control.VirtualUserController"/>
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <stringProp name="TargetLevel"></stringProp>
-        <stringProp name="RampUp"></stringProp>
-        <stringProp name="Steps"></stringProp>
-        <stringProp name="Hold"></stringProp>
-        <stringProp name="LogFilename"></stringProp>
-        <stringProp name="Iterations"></stringProp>
-        <boolProp name="same_user_on_next_iteration">false</boolProp>
-        <stringProp name="Unit">M</stringProp>
-      </com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup>
-      <hashTree/>
-      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="jp@gc - Stepping Thread Group" enabled="false">
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <stringProp name="ThreadGroup.num_threads">100</stringProp>
-        <stringProp name="Threads initial delay">0</stringProp>
-        <stringProp name="Start users count">10</stringProp>
-        <stringProp name="Start users count burst">0</stringProp>
-        <stringProp name="Start users period">30</stringProp>
-        <stringProp name="Stop users count">5</stringProp>
-        <stringProp name="Stop users period">1</stringProp>
-        <stringProp name="flighttime">60</stringProp>
-        <stringProp name="rampUp">5</stringProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <intProp name="LoopController.loops">-1</intProp>
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-        </elementProp>
-      </kg.apc.jmeter.threads.SteppingThreadGroup>
-      <hashTree/>
-      <kg.apc.jmeter.threads.UltimateThreadGroup guiclass="kg.apc.jmeter.threads.UltimateThreadGroupGui" testclass="kg.apc.jmeter.threads.UltimateThreadGroup" testname="jp@gc - Ultimate Thread Group" enabled="false">
-        <collectionProp name="ultimatethreadgroupdata"/>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <intProp name="LoopController.loops">-1</intProp>
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-        </elementProp>
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-      </kg.apc.jmeter.threads.UltimateThreadGroup>
-      <hashTree/>
-      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp Thread Group" enabled="false">
-        <intProp name="ThreadGroup.num_threads">1</intProp>
-        <intProp name="ThreadGroup.ramp_time">1</intProp>
-        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">1</stringProp>
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-        </elementProp>
-      </SetupThreadGroup>
-      <hashTree/>
-      <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="tearDown Thread Group" enabled="false">
-        <intProp name="ThreadGroup.num_threads">1</intProp>
-        <intProp name="ThreadGroup.ramp_time">1</intProp>
-        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">1</stringProp>
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-        </elementProp>
-      </PostThreadGroup>
       <hashTree/>
     </hashTree>
   </hashTree>
 </jmeterTestPlan>
-
