@@ -6,7 +6,7 @@ $JMETER_BIN = "C:\Tools\apache-jmeter-5.6.3\bin"
 $REPO_ROOT = Split-Path -Parent $PSScriptRoot
 
 # Full paths (so it works even after Push-Location)
-$JMX = Join-Path $REPO_ROOT "jmeter\Godrej_HomePage_Prod.jmx"
+$JMX = Join-Path $REPO_ROOT "jmeter\Godrej_HomePage_CI.jmx"
 $JTL = Join-Path $REPO_ROOT "results.jtl"
 
 $SLA_CHECKER = "scripts\check_sla_from_jtl.py"
@@ -17,6 +17,8 @@ $SLACK_CHANNEL_ID = $env:SLACK_CHANNEL_ID
 Write-Host "Starting JMeter..."
 Push-Location $JMETER_BIN
 .\jmeter.bat -n -t $JMX -l $JTL
+if ($LASTEXITCODE -ne 0) { throw "JMeter failed with exit code $LASTEXITCODE" }
+
 Pop-Location
 Write-Host "JMeter completed."
 
