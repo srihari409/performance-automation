@@ -2,6 +2,11 @@ name: Performance CI - Godrej Home Page
 
 on:
   workflow_dispatch:
+  schedule:
+    # GitHub cron uses UTC time
+    # 09:30 AM IST = 04:00 UTC
+    - cron: "0 4 * * *"
+
 
 jobs:
   performance-test:
