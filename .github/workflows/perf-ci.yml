@@ -1,0 +1,32 @@
+name: Performance CI - Godrej Home Page
+
+on:
+  workflow_dispatch:
+
+jobs:
+  performance-test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download JMeter
+        shell: powershell
+        run: |
+          Invoke-WebRequest https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip -OutFile jmeter.zip
+          Expand-Archive jmeter.zip C:\Tools -Force
+
+      - name: Run JMeter + SLA + Slack
+        shell: powershell
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: |
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/run_ci_only_jmeter_sla.ps1
