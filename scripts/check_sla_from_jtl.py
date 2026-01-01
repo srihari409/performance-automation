@@ -3,7 +3,7 @@ import math
 import sys
 import requests
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 def percentile(sorted_values, p: float):
     if not sorted_values:
@@ -48,15 +48,15 @@ def get_breaches(stats, p95_limit, p99_limit, err_limit):
     return b
 
 def fmt_ist(epoch_ms: int):
-    # IST = UTC+5:30
-    dt = datetime.fromtimestamp(epoch_ms / 1000.0, tz=timezone.utc).astimezone()
-    # Using local machine timezone; if you want fixed IST formatting, keep your machine on IST or we can force it.
-    return dt.strftime("%Y-%m-%d %H:%M:%S %Z")
+    # Force IST formatting regardless of machine timezone
+    ist = timezone(timedelta(hours=5, minutes=30))
+    dt = datetime.fromtimestamp(epoch_ms / 1000.0, tz=timezone.utc).astimezone(ist)
+    return dt.strftime("%Y-%m-%d %H:%M:%S IST")
 
 def main():
     if len(sys.argv) < 4:
         print("Usage: python check_sla_from_jtl.py <jtl_csv_path> <slack_token> <channel_id> [test_name]")
-        sys.exit(1)
+        return 1
 
     jtl_path = sys.argv[1]
     token = sys.argv[2]
@@ -127,8 +127,8 @@ def main():
                     txn_errors += 1
 
     if overall_total == 0:
-        slack_post(token, channel, "⚠️ SLA Check: JTL is empty (0 samples).")
-        return
+        slack_post(token, channel, f"⚠️ SLA Check: JTL is empty (0 samples). Test: {test_name}")
+        return 1  # fail pipeline
 
     overall = compute_stats(overall_elapsed, overall_total, overall_errors)
     overall_breaches = get_breaches(overall, OVERALL_P95_MS, OVERALL_P99_MS, OVERALL_ERR_PCT)
@@ -201,5 +201,12 @@ def main():
     slack_post(token, channel, msg)
     print("SLA+Summary message posted to Slack.")
 
+    # ✅ QUALITY GATE: return non-zero on breach
+    return 2 if any_breach else 0
+
 if __name__ == "__main__":
-    main()
+    try:
+        raise SystemExit(main())
+    except Exception as e:
+        print(f"ERROR: {e}")
+        raise SystemExit(2)
