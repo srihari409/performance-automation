@@ -23,6 +23,16 @@ jobs:
           Invoke-WebRequest https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip -OutFile jmeter.zip
           Expand-Archive jmeter.zip C:\Tools -Force
 
+      - name: Verify secrets are available (safe)
+        shell: powershell
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SLACK_BOT_TOKEN)) { throw "SLACK_BOT_TOKEN is EMPTY" }
+          if ([string]::IsNullOrWhiteSpace($env:SLACK_CHANNEL_ID)) { throw "SLACK_CHANNEL_ID is EMPTY" }
+          Write-Host "✅ Secrets are present (token hidden). Channel=$env:SLACK_CHANNEL_ID"
+
       - name: Run JMeter + SLA + Slack
         shell: powershell
         env:
