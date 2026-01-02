@@ -2,8 +2,9 @@ import csv
 import math
 import sys
 import requests
+import argparse
 from collections import defaultdict
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 def percentile(sorted_values, p: float):
     if not sorted_values:
@@ -31,10 +32,10 @@ def compute_stats(elapsed_list, total, errors):
     if total == 0:
         return None
     arr = sorted(elapsed_list)
-    avg = sum(arr) / len(arr)
+    avg = sum(arr) / len(arr) if arr else 0
     p95 = percentile(arr, 95)
     p99 = percentile(arr, 99)
-    err_pct = (errors * 100.0) / total
+    err_pct = (errors * 100.0) / total if total else 0.0
     return {"avg": avg, "p95": p95, "p99": p99, "err_pct": err_pct, "total": total, "errors": errors}
 
 def get_breaches(stats, p95_limit, p99_limit, err_limit):
@@ -47,23 +48,35 @@ def get_breaches(stats, p95_limit, p99_limit, err_limit):
         b.append(f"errors {stats['err_pct']:.2f}% > {err_limit:.2f}%")
     return b
 
-def fmt_ist(epoch_ms: int):
-    # Force IST formatting regardless of machine timezone
-    ist = timezone(timedelta(hours=5, minutes=30))
-    dt = datetime.fromtimestamp(epoch_ms / 1000.0, tz=timezone.utc).astimezone(ist)
-    return dt.strftime("%Y-%m-%d %H:%M:%S IST")
+def fmt_local(epoch_ms: int):
+    dt = datetime.fromtimestamp(epoch_ms / 1000.0, tz=timezone.utc).astimezone()
+    return dt.strftime("%Y-%m-%d %H:%M:%S %Z")
+
+def gha_notice(msg: str):
+    print(f"::notice::{msg}")
+
+def gha_warning(msg: str):
+    print(f"::warning::{msg}")
+
+def gha_error(msg: str):
+    print(f"::error::{msg}")
 
 def main():
-    if len(sys.argv) < 4:
-        print("Usage: python check_sla_from_jtl.py <jtl_csv_path> <slack_token> <channel_id> [test_name]")
-        return 1
+    parser = argparse.ArgumentParser()
+    parser.add_argument("jtl_csv_path")
+    parser.add_argument("slack_token")
+    parser.add_argument("channel_id")
+    parser.add_argument("test_name", nargs="?", default="Performance Test")
+    parser.add_argument("--annotations", action="store_true", help="Emit GitHub Actions annotations")
+    parser.add_argument("--fail-on-breach", action="store_true", help="Exit non-zero if SLA breaches")
+    args = parser.parse_args()
 
-    jtl_path = sys.argv[1]
-    token = sys.argv[2]
-    channel = sys.argv[3]
-    test_name = sys.argv[4] if len(sys.argv) >= 5 else "Performance Test"
+    jtl_path = args.jtl_csv_path
+    token = args.slack_token
+    channel = args.channel_id
+    test_name = args.test_name
 
-    # ---- YOUR SLA RULES ----
+    # ---- SLA RULES ----
     OVERALL_P95_MS = 250
     OVERALL_P99_MS = 500
     OVERALL_ERR_PCT = 1.0
@@ -74,7 +87,7 @@ def main():
     TXN_ERR_PCT = 1.0
 
     TOP_N_LABELS = 5
-    # ------------------------
+    # -------------------
 
     overall_elapsed = []
     overall_total = 0
@@ -126,15 +139,22 @@ def main():
                 if not success:
                     txn_errors += 1
 
+    # --- ALWAYS emit at least one annotation when --annotations is enabled ---
+    if args.annotations:
+        gha_notice(f"SLA check started for: {test_name} (JTL={jtl_path})")
+
     if overall_total == 0:
-        slack_post(token, channel, f"⚠️ SLA Check: JTL is empty (0 samples). Test: {test_name}")
-        return 1  # fail pipeline
+        slack_post(token, channel, "⚠️ SLA Check: JTL is empty (0 samples).")
+        if args.annotations:
+            gha_warning("JTL is empty (0 samples).")
+        return 0
 
     overall = compute_stats(overall_elapsed, overall_total, overall_errors)
     overall_breaches = get_breaches(overall, OVERALL_P95_MS, OVERALL_P99_MS, OVERALL_ERR_PCT)
 
     txn_breaches = []
     txn_text = f"\nℹ️ Transaction label not found in JTL: `{TXN_LABEL}`\n"
+    txn = None
     if txn_total > 0:
         txn = compute_stats(txn_elapsed, txn_total, txn_errors)
         txn_breaches = get_breaches(txn, TXN_P95_MS, TXN_P99_MS, TXN_ERR_PCT)
@@ -147,19 +167,19 @@ def main():
         if txn_breaches:
             txn_text += "• breaches: " + ", ".join(txn_breaches) + "\n"
 
-    # Execution window + throughput
+    # Window + throughput
+    window_text = ""
     duration_s = None
     rps = None
-    window_text = ""
     if min_ts is not None and max_ts is not None and max_ts > min_ts:
         duration_s = (max_ts - min_ts) / 1000.0
         rps = overall_total / duration_s if duration_s > 0 else None
         window_text = (
-            f"*Window:* {fmt_ist(min_ts)} → {fmt_ist(max_ts)}\n"
+            f"*Window:* {fmt_local(min_ts)} → {fmt_local(max_ts)}\n"
             f"*Duration:* {duration_s:.0f}s | *Throughput:* {rps:.2f} req/s\n"
         )
 
-    # Top slow labels by p95 (diagnostics)
+    # Top slow labels
     label_rows = []
     for label, arr in elapsed_by_label.items():
         if not arr:
@@ -187,7 +207,6 @@ def main():
         f"• avg={overall['avg']:.0f}ms | p95={overall['p95']:.0f}ms | p99={overall['p99']:.0f}ms\n"
         f"• rules: p95<={OVERALL_P95_MS}ms, p99<={OVERALL_P99_MS}ms, errors<={OVERALL_ERR_PCT:.2f}%\n"
     )
-
     if overall_breaches:
         msg += "• breaches: " + ", ".join(overall_breaches) + "\n"
 
@@ -198,15 +217,45 @@ def main():
         for lp95, lavg, le, t, label in top_labels:
             msg += f"• `{label}` — p95 {lp95:.0f}ms, avg {lavg:.0f}ms, err {le:.2f}% (n={t})\n"
 
+    # Slack always posts
     slack_post(token, channel, msg)
     print("SLA+Summary message posted to Slack.")
 
-    # ✅ QUALITY GATE: return non-zero on breach
-    return 2 if any_breach else 0
+    # ---- GitHub annotations (optional) ----
+    if args.annotations:
+        # Always show a compact summary annotation
+        base_summary = (
+            f"{test_name} | samples={overall['total']} err={overall['err_pct']:.2f}% "
+            f"p95={overall['p95']:.0f}ms p99={overall['p99']:.0f}ms"
+        )
+        if duration_s and rps is not None:
+            base_summary += f" | duration={duration_s:.0f}s rps={rps:.2f}"
+
+        if any_breach:
+            # INFO mode => warning. Gate mode => error.
+            if args.fail_on_breach:
+                gha_error("SLA BREACH: " + base_summary)
+            else:
+                gha_warning("SLA BREACH (INFO): " + base_summary)
+
+            if overall_breaches:
+                (gha_error if args.fail_on_breach else gha_warning)("Overall breaches: " + "; ".join(overall_breaches))
+            if txn_total > 0 and txn_breaches:
+                (gha_error if args.fail_on_breach else gha_warning)(f"Txn breaches ({TXN_LABEL}): " + "; ".join(txn_breaches))
+        else:
+            gha_notice("SLA OK: " + base_summary)
+
+    # Exit code control
+    if any_breach and args.fail_on_breach:
+        return 2
+    return 0
 
 if __name__ == "__main__":
     try:
-        raise SystemExit(main())
+        rc = main()
+    except SystemExit:
+        raise
     except Exception as e:
         print(f"ERROR: {e}")
-        raise SystemExit(2)
+        rc = 2
+    raise SystemExit(rc)
