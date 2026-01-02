@@ -44,10 +44,18 @@ jobs:
           if ([string]::IsNullOrWhiteSpace($env:SLACK_CHANNEL_ID)) { throw "SLACK_CHANNEL_ID is EMPTY" }
           Write-Host "✅ Secrets are present (token hidden). Channel=$env:SLACK_CHANNEL_ID"
 
-      - name: Run JMeter + SLA + Slack (INFO)
+      # - name: Run JMeter + SLA + Slack (INFO)
+      #   shell: powershell
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      #     SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+      #   run: |
+      #     powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/run_ci_info.ps1
+
+      - name: Run JMeter + SLA + Slack (GATE)
         shell: powershell
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: |
-          powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/run_ci_info.ps1
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/run_ci_gate.ps1
