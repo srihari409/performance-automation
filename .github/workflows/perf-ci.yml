@@ -3,14 +3,21 @@ name: Performance CI - Godrej Home Page
 on:
   workflow_dispatch:
   schedule:
-    # GitHub cron uses UTC time
-    # 09:30 AM IST = 04:00 UTC
-    - cron: "0 4 * * *"
+    - cron: "0 4 * * *"  # 09:30 AM IST = 04:00 UTC
+  pull_request:
+    branches:
+      - main
 
+concurrency:
+  group: perf-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   performance-test:
+    name: Scheduled/Manual Performance Run
+    if: github.event_name != 'pull_request'
     runs-on: windows-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -19,15 +26,15 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
 
       - name: Download JMeter
         shell: powershell
         run: |
           Invoke-WebRequest https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip -OutFile jmeter.zip
           Expand-Archive jmeter.zip C:\Tools -Force
-          
+
       - name: Setup Python deps
         shell: powershell
         run: |
@@ -44,14 +51,6 @@ jobs:
           if ([string]::IsNullOrWhiteSpace($env:SLACK_CHANNEL_ID)) { throw "SLACK_CHANNEL_ID is EMPTY" }
           Write-Host "✅ Secrets are present (token hidden). Channel=$env:SLACK_CHANNEL_ID"
 
-      # - name: Run JMeter + SLA + Slack (INFO)
-      #   shell: powershell
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      #     SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-      #   run: |
-      #     powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/run_ci_info.ps1
-
       - name: Run JMeter + SLA + Slack (GATE)
         shell: powershell
         env:
@@ -59,3 +58,51 @@ jobs:
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: |
           powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/run_ci_gate.ps1
+
+  pr-performance-gate:
+    name: Performance PR Gate
+    if: github.event_name == 'pull_request'
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Download JMeter
+        shell: powershell
+        run: |
+          Invoke-WebRequest https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip -OutFile jmeter.zip
+          Expand-Archive jmeter.zip C:\Tools -Force
+
+      - name: Setup Python deps
+        shell: powershell
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      # For PRs from forks, secrets won't be available → skip secret validation & Slack posting
+      - name: Verify secrets are available (safe)
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        shell: powershell
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SLACK_BOT_TOKEN)) { throw "SLACK_BOT_TOKEN is EMPTY" }
+          if ([string]::IsNullOrWhiteSpace($env:SLACK_CHANNEL_ID)) { throw "SLACK_CHANNEL_ID is EMPTY" }
+          Write-Host "✅ Secrets are present (token hidden). Channel=$env:SLACK_CHANNEL_ID"
+
+      - name: Run JMeter + SLA PR Gate
+        shell: powershell
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: |
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/run_ci_pr_gate.ps1
